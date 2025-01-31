@@ -1,9 +1,12 @@
+document.addEventListener("DOMContentLoaded", function() {
+    navigateTo('home');
+});
 function navigateTo(page) {
     const content = document.getElementById('content');
     switch (page) {
         case 'home':
             content.innerHTML = `
-                <div class="container-fluid">
+                <div class="container-fluid container mt-5">
                     <div class="row flex-grow-1">
                         <!-- Section 1 -->
                         <div class="col-md-6 d-flex flex-column justify-content-center align-items-start bg-light p-4">
@@ -71,10 +74,38 @@ function navigateTo(page) {
             setTimeout(addEventListenerToIncidentForm, 100);
             break;
         case 'map':
-            content.innerHTML = `<div class="d-flex justify-content-center">
-                            <div id="map" style="height: 500px; width: 50em"></div>
-                        </div>`;
+            content.innerHTML = `
+                <div class="container mt-5 d-flex justify-content-center">
+                    <div id="map" style="height: 500px; width: 50em"></div>
+                </div>
+
+                <div class="container mt-4">
+                    <h2>Search Incidents</h2>
+                    <form id="search-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="search-id" class="form-label">Search by ID</label>
+                                <input type="number" class="form-control" id="search-id" placeholder="Enter incident ID">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="search-priority" class="form-label">Search by Priority</label>
+                                <select class="form-select" id="search-priority">
+                                    <option value="">Select Priority</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Search</button>
+                    </form>
+
+                    <div id="search-results" class="mt-4"></div>
+                </div>
+            `;
+            
             loadMap();
+            setTimeout(addEventListenerToSearchForm, 100);
             break;
         case 'contact-us':
             content.innerHTML = `
@@ -122,51 +153,59 @@ function initMap() {
     };
     const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-
     let localMarkers = JSON.parse(localStorage.getItem('markers')) || [];
 
+    if (localMarkers.length === 0) {
+        console.log("No incidents in localStorage, loading from JSON...");
 
-    fetch('markers.json')
-        .then(response => response.json())
-        .then(jsonMarkers => {
-
-            let allMarkers = [...localMarkers, ...jsonMarkers];
-
-            if (allMarkers.length === 0) {
-                console.warn("No markers found in localStorage or markers.json.");
-                return;
-            }
-
-            allMarkers.forEach(markerData => {
-                const marker = new google.maps.Marker({
-                    position: { lat: markerData.latitude, lng: markerData.longitude },
-                    map: map,
-                    title: markerData.title
-                });
-
-                const infoWindowContent = `
-                    <div>
-                        <h3>${markerData.title}</h3>
-                        <p><strong>Incident Name:</strong> ${markerData.incidentName}</p>
-                        <p><strong>Priority:</strong> ${markerData.priority}</p>
-                        <p><strong>Requested By:</strong> ${markerData.requestedBy}</p>
-                        <p><strong>Date:</strong> ${markerData.date}</p>
-                        <p><strong>Time:</strong> ${markerData.time}</p>
-                        <p><strong>Description:</strong> ${markerData.description || "No description available"}</p>
-                        <p><strong>Resolved:</strong> ${markerData.isResolved ? 'Yes' : 'No'}</p>
-                    </div>
-                `;
-                const infoWindow = new google.maps.InfoWindow({
-                    content: infoWindowContent
-                });
-
-                marker.addListener('click', function () {
-                    infoWindow.open(map, marker);
-                });
-            });
-        })
-        .catch(error => console.error('Error loading markers:', error));
+        fetch('markers.json')
+            .then(response => response.json())
+            .then(jsonMarkers => {
+                console.log("Fetched markers from JSON:", jsonMarkers);
+                localStorage.setItem('markers', JSON.stringify(jsonMarkers));
+                addMarkersToMap(jsonMarkers, map);
+            })
+            .catch(error => console.error('Error loading markers.json:', error));
+    } else {
+        console.log("Loading incidents from localStorage.");
+        addMarkersToMap(localMarkers, map);
+    }
 }
+
+
+function addMarkersToMap(markers, map) {
+    if (markers.length === 0) {
+        console.warn("No markers to display.");
+        return;
+    }
+
+    markers.forEach(markerData => {
+        const marker = new google.maps.Marker({
+            position: { lat: parseFloat(markerData.latitude), lng: parseFloat(markerData.longitude) },
+            map: map,
+            title: markerData.title
+        });
+
+        const infoWindowContent = `
+            <div>
+                <h3>${markerData.title}</h3>
+                <p><strong>Incident Name:</strong> ${markerData.incidentName}</p>
+                <p><strong>Priority:</strong> ${markerData.priority}</p>
+                <p><strong>Requested By:</strong> ${markerData.requestedBy}</p>
+                <p><strong>Date:</strong> ${markerData.date}</p>
+                <p><strong>Time:</strong> ${markerData.time}</p>
+                <p><strong>Description:</strong> ${markerData.description || "No description available"}</p>
+                <p><strong>Resolved:</strong> ${markerData.isResolved ? 'Yes' : 'No'}</p>
+            </div>
+        `;
+        const infoWindow = new google.maps.InfoWindow({ content: infoWindowContent });
+
+        marker.addListener('click', function () {
+            infoWindow.open(map, marker);
+        });
+    });
+}
+
 
 function addEventListenerToForm() {
     const form = document.getElementById('contact-form');
@@ -203,7 +242,7 @@ function addEventListenerToIncidentForm() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-        
+
         const incidentName = document.getElementById('incident-name').value;
         const priority = document.getElementById('priority').value;
         const requestedBy = document.getElementById('requested-by').value;
@@ -237,4 +276,59 @@ function addEventListenerToIncidentForm() {
         console.log("Incident and marker saved:", newMarker);
         alert("Incident submitted successfully!");
     });
+}
+
+
+function addEventListenerToSearchForm() {
+    const form = document.getElementById('search-form');
+    if (!form) {
+        console.error("Search form not found!");
+        return;
+    }
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const searchId = document.getElementById('search-id').value.trim();
+        const searchPriority = document.getElementById('search-priority').value.trim();
+
+        let markers = JSON.parse(localStorage.getItem('markers')) || [];
+        
+        let filteredIncidents = markers;
+
+        if (searchId) {
+            filteredIncidents = filteredIncidents.filter(incident => incident.id == searchId);
+        }
+
+        if (searchPriority) {
+            filteredIncidents = filteredIncidents.filter(incident => incident.priority === searchPriority);
+        }
+
+        displaySearchResults(filteredIncidents);
+    });
+}
+
+
+function displaySearchResults(results) {
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = "";
+
+    if (results.length === 0) {
+        resultsContainer.innerHTML = `<p class="text-danger">No incidents found.</p>`;
+        return;
+    }
+
+    let resultsHTML = "<h3>Search Results:</h3><ul class='list-group'>";
+    results.forEach(incident => {
+        resultsHTML += `
+            <li class="list-group-item">
+                <strong>ID:</strong> ${incident.id} |
+                <strong>Incident:</strong> ${incident.incidentName} |
+                <strong>Priority:</strong> ${incident.priority} |
+                <strong>Requested By:</strong> ${incident.requestedBy}
+            </li>
+        `;
+    });
+    resultsHTML += "</ul>";
+
+    resultsContainer.innerHTML = resultsHTML;
 }
