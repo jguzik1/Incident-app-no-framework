@@ -1,6 +1,63 @@
-$primary-color: #3498db;
-
+html,
 body {
-  background: $primary-color;
-  font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff; // Tło nawigacji
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // Subtelny cień dla lepszego efektu
+}
+
+.content {
+    flex: 1;
+    width: 100%; // Ensure full width
+    height: 100%; // Ensure full height
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100vw; // Ensure maximum width
+    max-height: 100vh; // Ensure maximum height
+}
+
+.footer {
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+// Styl dla przycisku hamburger menu
+.navbar-toggler {
+    border: none;
+
+    &:focus {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+// Animacja hamburgera
+.navbar-toggler-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-collapse {
+    transition: max-height 0.3s ease-in-out;
+}
+
+// Gdy menu jest rozwinięte
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    transform: rotate(90deg);
 }
