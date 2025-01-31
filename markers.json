@@ -1,0 +1,93 @@
+[
+    {
+        "id": 1,
+        "latitude": 50.065200,
+        "longitude": 19.96500,
+        "title": "Road Blockage",
+        "description": "Description for Marker 1",
+        "incidentName": "Road Blockage",
+        "priority": "High",
+        "requestedBy": "John Doe",
+        "date": "2023-10-01",
+        "time": "14:30",
+        "isResolved": false
+    },
+    {
+        "id": 2,
+        "latitude": 50.066200,
+        "longitude": 19.96600,
+        "title": "Traffic Jam",
+        "description": "Description for Marker 2",
+        "incidentName": "Traffic Jam",
+        "priority": "Medium",
+        "requestedBy": "Jane Smith",
+        "date": "2023-10-02",
+        "time": "09:15",
+        "isResolved": true
+    },
+    {
+        "id": 3,
+        "latitude": 50.067000,
+        "longitude": 19.96700,
+        "title": "Accident",
+        "description": "Minor accident reported",
+        "incidentName": "Accident",
+        "priority": "Low",
+        "requestedBy": "Alice Brown",
+        "date": "2023-10-03",
+        "time": "11:00",
+        "isResolved": false
+    },
+    {
+        "id": 4,
+        "latitude": 50.068500,
+        "longitude": 19.96850,
+        "title": "Construction",
+        "description": "Road construction ongoing",
+        "incidentName": "Construction",
+        "priority": "Medium",
+        "requestedBy": "Bob White",
+        "date": "2023-10-04",
+        "time": "08:45",
+        "isResolved": false
+    },
+    {
+        "id": 5,
+        "latitude": 50.064000,
+        "longitude": 19.96400,
+        "title": "Flooding",
+        "description": "Flooding due to heavy rain",
+        "incidentName": "Flooding",
+        "priority": "High",
+        "requestedBy": "Charlie Green",
+        "date": "2023-10-05",
+        "time": "16:20",
+        "isResolved": true
+    },
+    {
+        "id": 6,
+        "latitude": 50.063500,
+        "longitude": 19.96350,
+        "title": "Power Outage",
+        "description": "Power outage affecting traffic lights",
+        "incidentName": "Power Outage",
+        "priority": "High",
+        "requestedBy": "Diana Black",
+        "date": "2023-10-06",
+        "time": "10:10",
+        "isResolved": false
+    },
+    {
+        "id": 7,
+        "latitude": 50.062000,
+        "longitude": 19.96200,
+        "title": "Event",
+        "description": "Local event causing traffic",
+        "incidentName": "Event",
+        "priority": "Low",
+        "requestedBy": "Eve White",
+        "date": "2023-10-07",
+        "time": "13:30",
+        "isResolved": true
+    }
+]

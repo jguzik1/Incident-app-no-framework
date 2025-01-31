@@ -1,5 +1,3 @@
-
-
 function navigateTo(page) {
     const content = document.getElementById('content');
     switch (page) {
@@ -36,86 +34,9 @@ function navigateTo(page) {
             break;
         case 'map':
             content.innerHTML = `<div class="container-fluid">
-                            <div id="map" style="height: 100%; width: 100%"></div>
-                        </div>
-                        `;
-            console.log("siema")
-            document.addEventListener('DOMContentLoaded', function () {
-                const mapElement = document.getElementById('map');
-                if (!mapElement) {
-                    console.error('Map element not found!');
-                    return;
-                }
-
-                const map = new google.maps.Map(mapElement, {
-                    center: { lat: 50.065200, lng: 19.96500 },
-                    zoom: 15
-                });
-
-                console.log("Map initialized");
-
-                // Simulate fetching data from a service
-                fetchMarkersData().then(markers => {
-                    console.log('Markers fetched:', markers);
-                    addMarkersToMap(map, markers);
-                }).catch(error => {
-                    console.error('Error fetching markers:', error);
-                });
-            });
-
-            function fetchMarkersData() {
-                // Simulate an HTTP request to fetch marker data
-                return new Promise((resolve, reject) => {
-                    // Replace this with actual data fetching logic
-                    const markers = [
-                        {
-                            id: 1,
-                            latitude: 50.065200,
-                            longitude: 19.94500,
-                            incidentName: 'Incident 1',
-                            streetNumber: '123',
-                            priority: 'High',
-                            requestedBy: 'User A',
-                            date: '2023-10-01',
-                            time: '10:00',
-                            isResolved: false
-                        },
-                        // Add more marker objects as needed
-                    ];
-                    resolve(markers);
-                });
-            }
-
-            function addMarkersToMap(map, markers) {
-                markers.forEach(markerData => {
-                    const marker = new google.maps.Marker({
-                        position: { lat: markerData.latitude, lng: markerData.longitude },
-                        map: map,
-                        title: markerData.incidentName,
-                        icon: markerData.isResolved ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : undefined
-                    });
-
-                    const contentString = `
-                                <div>
-                                  <h3>${markerData.incidentName} (ID: ${markerData.id})</h3>
-                                  <p><strong>Street Number:</strong> ${markerData.streetNumber}</p>
-                                  <p><strong>Priority:</strong> ${markerData.priority}</p>
-                                  <p><strong>Requested By:</strong> ${markerData.requestedBy}</p>
-                                  <p><strong>Date:</strong> ${markerData.date}</p>
-                                  <p><strong>Time:</strong> ${markerData.time}</p>
-                                  <p><strong>Resolved:</strong> ${markerData.isResolved ? 'Yes' : 'No'}</p>
-                                </div>
-                              `;
-
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: contentString
-                    });
-
-                    marker.addListener('click', () => {
-                        infoWindow.open(map, marker);
-                    });
-                });
-            }
+                            <div id="map" style="height: 500px; width: 100%"></div>
+                        </div>`;
+            loadMap();
             break;
         case 'contact-us':
             content.innerHTML = '<h1>Contact Us</h1>';
@@ -125,3 +46,55 @@ function navigateTo(page) {
     }
 }
 
+function loadMap() {
+    // Wczytaj mapę po załadowaniu zawartości strony
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLs4RNEDm-xf2PmVnPYgN0Y0qJZcifUuk&callback=initMap`;
+    script.async = true;
+    document.body.appendChild(script);
+}
+
+function initMap() {
+    // Inicjalizacja mapy
+    const mapOptions = {
+        center: { lat: 50.065200, lng: 19.96500 }, // Przykładowa lokalizacja - centrum
+        zoom: 12
+    };
+    const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    // Wczytaj dane markerów z pliku JSON
+    fetch('markers.json')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(markerData => {
+                const marker = new google.maps.Marker({
+                    position: { lat: markerData.latitude, lng: markerData.longitude },
+                    map: map,
+                    title: markerData.title
+                });
+
+                // Dodaj info window do markera, które wyświetli szczegóły
+                const infoWindowContent = `
+                    <div>
+                        <h3>${markerData.title}</h3>
+                        <p><strong>Incident Name:</strong> ${markerData.incidentName}</p>
+                        <p><strong>Priority:</strong> ${markerData.priority}</p>
+                        <p><strong>Requested By:</strong> ${markerData.requestedBy}</p>
+                        <p><strong>Date:</strong> ${markerData.date}</p>
+                        <p><strong>Time:</strong> ${markerData.time}</p>
+                        <p><strong>Description:</strong> ${markerData.description}</p>
+                        <p><strong>Resolved:</strong> ${markerData.isResolved ? 'Yes' : 'No'}</p>
+                    </div>
+                `;
+                const infoWindow = new google.maps.InfoWindow({
+                    content: infoWindowContent
+                });
+
+                // Otwórz info window po kliknięciu w marker
+                marker.addListener('click', function () {
+                    infoWindow.open(map, marker);
+                });
+            });
+        })
+        .catch(error => console.error('Error loading markers:', error));
+}

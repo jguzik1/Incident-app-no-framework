@@ -61,3 +61,21 @@ body {
 .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
     transform: rotate(90deg);
 }
+
+.container-fluid {
+    display: flex;
+    /* Ustawienie kontenera na flex */
+    flex-direction: column;
+    /* Ustawienie dzieci w kolumnie */
+    height: 100vh;
+    /* Ustawienie wysokości na 100% okna */
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    flex: 1;
+    /* Mapę ustawiamy, by rozciągała się na dostępną przestrzeń */
+    width: 100%;
+    /* Szerokość mapy na 100% */
+}
