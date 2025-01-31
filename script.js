@@ -118,10 +118,56 @@ function navigateTo(page) {
             }
             break;
         case 'contact-us':
-            content.innerHTML = '<h1>Contact Us</h1>';
+            content.innerHTML = `
+                <div class="container mt-5">
+                <h2>Contact Us</h2>
+                <form id="contact-form">
+                <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" required>
+                    <option value="feedback">Feedback</option>
+                    <option value="bug">Report Bug</option>
+                </select>
+                </div>
+                <div class="mb-3">
+                <label for="message" class="form-label">Your Message</label>
+                <textarea class="form-control" id="message" rows="4" placeholder="Enter your message" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                </div>
+            `;
+            console.log("siema2")
+            setTimeout(addEventListenerToForm, 100);
             break;
         default:
             content.innerHTML = '<h1>Page Not Found</h1>';
     }
 }
 
+function addEventListenerToForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) {
+        console.error("Form not found!");
+        return;
+    }
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const category = document.getElementById('category').value;
+        const message = document.getElementById('message').value;
+
+        console.log({
+            email,
+            category,
+            message
+        });
+
+        alert("Form submitted successfully!");
+    });
+}
