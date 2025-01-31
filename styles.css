@@ -1,6 +1,36 @@
 body {
-  background: #3498db;
+  background-color: #fef6e4 !important;
+  color: #172c66;
   font-family: Arial, sans-serif;
+}
+
+.bg-light {
+  background-color: #fef6e4 !important;
+}
+
+h1, h2, h3 {
+  color: #001858;
+}
+
+p {
+  color: #172c66;
+}
+
+.btn-primary {
+  background-color: #f582ae !important;
+  border-color: #f582ae !important;
+  color: #001858 !important;
+}
+.btn-primary:hover {
+  background-color: rgb(241.2222222222, 82.7777777778, 143.4) !important;
+  border-color: rgb(241.2222222222, 82.7777777778, 143.4) !important;
+}
+
+.card, .container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /*# sourceMappingURL=styles.css.map */

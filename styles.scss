@@ -1,81 +1,45 @@
-html,
+
+$background-color: #fef6e4;
+$headline-color: #001858;
+$paragraph-color: #172c66;
+$button-color: #f582ae;
+$button-text-color: #001858;
+
+
 body {
-    height: 100%;
-    margin: 0;
+  background-color: $background-color !important; 
+  color: $paragraph-color;
+  font-family: Arial, sans-serif;
 }
 
-.main {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+
+.bg-light {
+  background-color: $background-color !important;
 }
 
-.navbar {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    background-color: #fff; // Tło nawigacji
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // Subtelny cień dla lepszego efektu
+h1, h2, h3 {
+  color: $headline-color;
 }
 
-.content {
-    flex: 1;
-    width: 100%; // Ensure full width
-    height: 100%; // Ensure full height
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 100vw; // Ensure maximum width
-    max-height: 100vh; // Ensure maximum height
+
+p {
+  color: $paragraph-color;
 }
 
-.footer {
-    width: 100%;
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    padding: 1rem;
+.btn-primary {
+  background-color: $button-color !important;
+  border-color: $button-color !important;
+  color: $button-text-color !important;
+
+  &:hover {
+    background-color: darken($button-color, 10%) !important;
+    border-color: darken($button-color, 10%) !important;
+  }
 }
 
-// Styl dla przycisku hamburger menu
-.navbar-toggler {
-    border: none;
-
-    &:focus {
-        outline: none;
-        box-shadow: none;
-    }
-}
-
-// Animacja hamburgera
-.navbar-toggler-icon {
-    transition: transform 0.3s ease-in-out;
-}
-
-.navbar-collapse {
-    transition: max-height 0.3s ease-in-out;
-}
-
-// Gdy menu jest rozwinięte
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-    transform: rotate(90deg);
-}
-
-.container-fluid {
-    display: flex;
-    /* Ustawienie kontenera na flex */
-    flex-direction: column;
-    /* Ustawienie dzieci w kolumnie */
-    height: 100vh;
-    /* Ustawienie wysokości na 100% okna */
-    margin: 0;
-    padding: 0;
-}
-
-#map {
-    flex: 1;
-    /* Mapę ustawiamy, by rozciągała się na dostępną przestrzeń */
-    width: 100%;
-    /* Szerokość mapy na 100% */
+.card, .container {
+  background-color: lighten($button-color, 40%);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }

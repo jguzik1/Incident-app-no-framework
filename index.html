@@ -14,6 +14,7 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLs4RNEDm-xf2PmVnPYgN0Y0qJZcifUuk&libraries=places"></script>
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLs4RNEDm-xf2PmVnPYgN0Y0qJZcifUuk&libraries=places"></script>
+        <link rel="stylesheet" href="styles.css">
     <style>
         html,
         body {
@@ -21,20 +22,16 @@
             margin: 0;
         }
 
-        /* Main container uses flexbox to ensure the footer stays at the bottom */
         .main {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            /* Ensures the page fills at least the full height */
         }
 
-        /* This ensures the content grows to take up available space */
         .content {
             flex: 1;
         }
 
-        /* Sticky footer style */
         footer {
             position: sticky;
             bottom: 0;
@@ -78,7 +75,6 @@
                 </div>
             </nav>
             <div id="content">
-                <!-- Dynamic content will be loaded here -->
             </div>
         </div>
 
