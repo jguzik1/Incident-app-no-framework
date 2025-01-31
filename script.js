@@ -30,11 +30,49 @@ function navigateTo(page) {
             `;
             break;
         case 'addRequest':
-            content.innerHTML = '<h1>Request an Incident</h1>';
+            content.innerHTML = `
+                <div class="container mt-5">
+                    <h2>Report an Incident</h2>
+                    <form id="incident-form">
+                        <div class="mb-3">
+                            <label for="incident-name" class="form-label">Incident Name</label>
+                            <input type="text" class="form-control" id="incident-name" placeholder="Enter incident name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <select class="form-select" id="priority" required>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="requested-by" class="form-label">Requested By</label>
+                            <input type="text" class="form-control" id="requested-by" placeholder="Enter your name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            <input type="time" class="form-control" id="time" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+                        
+            `;
+
+            setTimeout(addEventListenerToIncidentForm, 100);
             break;
         case 'map':
-            content.innerHTML = `<div class="container-fluid">
-                            <div id="map" style="height: 500px; width: 100%"></div>
+            content.innerHTML = `<div class="d-flex justify-content-center">
+                            <div id="map" style="height: 500px; width: 50em"></div>
                         </div>`;
             loadMap();
             break;
@@ -42,27 +80,27 @@ function navigateTo(page) {
             content.innerHTML = `
                 <div class="container mt-5">
                 <h2>Contact Us</h2>
-                <form id="contact-form">
-                <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-                </div>
-                <div class="mb-3">
-                <label for="category" class="form-label">Category</label>
-                <select class="form-select" id="category" required>
-                    <option value="feedback">Feedback</option>
-                    <option value="bug">Report Bug</option>
-                </select>
-                </div>
-                <div class="mb-3">
-                <label for="message" class="form-label">Your Message</label>
-                <textarea class="form-control" id="message" rows="4" placeholder="Enter your message" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+                    <form id="contact-form">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" required>
+                                <option value="feedback">Feedback</option>
+                                <option value="bug">Report Bug</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Your Message</label>
+                            <textarea class="form-control" id="message" rows="4" placeholder="Enter your message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
             `;
-            console.log("siema2")
+            console.log("siema2 router działa")
             setTimeout(addEventListenerToForm, 100);
             break;
         default:
@@ -71,7 +109,6 @@ function navigateTo(page) {
 }
 
 function loadMap() {
-    // Wczytaj mapę po załadowaniu zawartości strony
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCLs4RNEDm-xf2PmVnPYgN0Y0qJZcifUuk&callback=initMap`;
     script.async = true;
@@ -79,25 +116,34 @@ function loadMap() {
 }
 
 function initMap() {
-    // Inicjalizacja mapy
     const mapOptions = {
-        center: { lat: 50.065200, lng: 19.96500 }, // Przykładowa lokalizacja - centrum
+        center: { lat: 50.065200, lng: 19.96500 },
         zoom: 12
     };
     const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-    // Wczytaj dane markerów z pliku JSON
+
+    let localMarkers = JSON.parse(localStorage.getItem('markers')) || [];
+
+
     fetch('markers.json')
         .then(response => response.json())
-        .then(data => {
-            data.forEach(markerData => {
+        .then(jsonMarkers => {
+
+            let allMarkers = [...localMarkers, ...jsonMarkers];
+
+            if (allMarkers.length === 0) {
+                console.warn("No markers found in localStorage or markers.json.");
+                return;
+            }
+
+            allMarkers.forEach(markerData => {
                 const marker = new google.maps.Marker({
                     position: { lat: markerData.latitude, lng: markerData.longitude },
                     map: map,
                     title: markerData.title
                 });
 
-                // Dodaj info window do markera, które wyświetli szczegóły
                 const infoWindowContent = `
                     <div>
                         <h3>${markerData.title}</h3>
@@ -106,7 +152,7 @@ function initMap() {
                         <p><strong>Requested By:</strong> ${markerData.requestedBy}</p>
                         <p><strong>Date:</strong> ${markerData.date}</p>
                         <p><strong>Time:</strong> ${markerData.time}</p>
-                        <p><strong>Description:</strong> ${markerData.description}</p>
+                        <p><strong>Description:</strong> ${markerData.description || "No description available"}</p>
                         <p><strong>Resolved:</strong> ${markerData.isResolved ? 'Yes' : 'No'}</p>
                     </div>
                 `;
@@ -114,7 +160,6 @@ function initMap() {
                     content: infoWindowContent
                 });
 
-                // Otwórz info window po kliknięciu w marker
                 marker.addListener('click', function () {
                     infoWindow.open(map, marker);
                 });
@@ -122,6 +167,7 @@ function initMap() {
         })
         .catch(error => console.error('Error loading markers:', error));
 }
+
 function addEventListenerToForm() {
     const form = document.getElementById('contact-form');
     if (!form) {
@@ -135,12 +181,60 @@ function addEventListenerToForm() {
         const category = document.getElementById('category').value;
         const message = document.getElementById('message').value;
 
-        console.log({
-            email,
-            category,
-            message
-        });
+        const feedback = { email, category, message };
 
-        alert("Form submitted successfully!");
+        let feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+        feedbacks.push(feedback);
+
+        localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+        console.log("Feedback saved:", feedback);
+        alert("Feedback submitted successfully!");
+    });
+}
+
+
+function addEventListenerToIncidentForm() {
+    const form = document.getElementById('incident-form');
+    if (!form) {
+        console.error("Incident form not found!");
+        return;
+    }
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const incidentName = document.getElementById('incident-name').value;
+        const priority = document.getElementById('priority').value;
+        const requestedBy = document.getElementById('requested-by').value;
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const description = document.getElementById('description').value;
+
+        let markers = JSON.parse(localStorage.getItem('markers')) || [];
+        let newId = markers.length > 0 ? markers[markers.length - 1].id + 1 : 1;
+
+        const latitude = 50.065200 + (Math.random() * 0.02 - 0.01);
+        const longitude = 19.965000 + (Math.random() * 0.02 - 0.01);
+
+        const newMarker = {
+            id: newId,
+            latitude,
+            longitude,
+            title: incidentName,
+            description: description || "No description provided",
+            incidentName,
+            priority,
+            requestedBy,
+            date,
+            time,
+            isResolved: false
+        };
+
+        markers.push(newMarker);
+        localStorage.setItem('markers', JSON.stringify(markers));
+
+        console.log("Incident and marker saved:", newMarker);
+        alert("Incident submitted successfully!");
     });
 }
